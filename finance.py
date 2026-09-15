@@ -1,7 +1,7 @@
 from datetime import datetime
 def add_transaction(data: dict, trans_type: str, amount: float, category: str, description: str = ""):
-    if len(data["transactions"]) > 0:
-        new_id = len(data["transactions"]) + 1
+    if data["transactions"]:
+        new_id = max(t["id"] for t in data["transactions"]) + 1
     else:
         new_id = 1
 
@@ -30,19 +30,21 @@ def get_balance(data: dict):
             total_expense += t["amount"]
     
     return {
-        "income": total_income,
-        "expense": total_expense,
-        "balance": total_income - total_expense
+        "income": round(total_income, 2),
+        "expense": round(total_expense, 2),
+        "balance": round(total_income - total_expense, 2)
     }
 
 def add_category(data: dict, category_name: str):
-    if category_name not in data["categories"]:
-        data["categories"].append(category_name)
+    cleaned_name = category_name.strip()
+    if cleaned_name and cleaned_name not in data["categories"]:
+        data["categories"].append(cleaned_name)
         return True
     return False
 
 def remove_category(data: dict, category_name: str):
-    if category_name in data["categories"]:
-        data["categories"].remove(category_name)
+    cleaned_name = category_name.strip()
+    if cleaned_name in data["categories"]:
+        data["categories"].remove(cleaned_name)
         return True
     return False
