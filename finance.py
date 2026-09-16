@@ -48,3 +48,37 @@ def remove_category(data: dict, category_name: str):
         data["categories"].remove(cleaned_name)
         return True
     return False
+
+def get_month_statistics(data: dict, month: str):
+    total_income = 0
+    total_expense = 0
+
+    for transaction in data["transactions"]:
+        if transaction["date"][3:] == month:
+            if transaction["type"] == "income":
+                total_income += transaction["amount"]
+            elif transaction["type"] == "expense":
+                total_expense += transaction["amount"]
+
+    return {
+        "income": round(total_income, 2),
+        "expense": round(total_expense, 2),
+        "balance": round(total_income - total_expense, 2)
+    }
+
+def get_category_statistics(data: dict, month: str):
+    statistics = {}
+
+    for transaction in data["transactions"]:
+        if transaction["date"][3:] == month and transaction["type"] == "expense":
+            category = transaction["category"]
+
+            if category not in statistics:
+                statistics[category] = 0
+
+            statistics[category] += transaction["amount"]
+
+    for category in statistics:
+        statistics[category] = round(statistics[category], 2)
+
+    return statistics
